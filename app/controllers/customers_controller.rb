@@ -9,8 +9,8 @@ class CustomersController < ApplicationController
       @customers = Customer.where(
           customer_search_term.where_clause,
           customer_search_term.where_args).
-          order(customer_search_term.order).
-          offset(PAGE_SIZE * @page).limit(PAGE_SIZE)
+        order(customer_search_term.order).
+        offset(PAGE_SIZE * @page).limit(PAGE_SIZE)
     else
       @customers = []
     end
@@ -18,6 +18,13 @@ class CustomersController < ApplicationController
     respond_to do |format|
       format.html {}
       format.json { render json: @customers }
+    end
+  end
+
+  def show
+    customer = Customer.find(params[:id])
+    respond_to do |format|
+      format.json { render json: customer }
     end
   end
 end

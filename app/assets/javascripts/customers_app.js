@@ -1,15 +1,31 @@
-var app = angular.module("customers", []);
 
-app.controller("CustomerSearchController", ["$scope", "$http",
-    function($scope, $http){
+var app = angular.module("customers", ["ngRoute", "templates"]);
+
+app.config(["$routeProvider",
+    function($routeProvider){
+        $routeProvider.when("/", {
+            controller: "CustomerSearchController",
+            templateUrl: "customer_search.html"
+        });
+
+        $routeProvider.when("/:id", {
+            controller: "CustomerDetailController",
+            templateUrl: "customer_detail.html"
+        });
+    }
+]);
+
+app.controller("CustomerSearchController", ["$scope", "$http", "$location",
+    function($scope, $http, $location){
         var page = 0;
         $scope.customers = [];
 
         $scope.search = function(searchTerm){
             if(searchTerm.length < 3)
                 return;
+
             $http.get("/customers.json",
-                { "params": { "keywords": searchTerm, "page": page }}
+                    { "params": { "keywords": searchTerm, "page": page }}
             ).success(function(data, status, header, config){
                 $scope.customers = data;
             }).error(function(data, status, header, config){
@@ -28,5 +44,23 @@ app.controller("CustomerSearchController", ["$scope", "$http",
             page = page + 1;
             $scope.search($scope.keywords);
         }
+
+        $scope.viewDetails = function(customer){
+            $location.path("/" + customer.id)
+        }
     }
+]);
+
+app.controller("CustomerDetailController", ["$scope", "$http", "$routeParams",
+        function($scope, $http, $routeParams){
+            var customerId = $routeParams.id;
+            $scope.customer = {};
+
+            $http.get("/customers/" + customerId + ".json")
+            .success(function(data, status, header, config){
+                $scope.customer = data;
+            }).error(function(data, status, header, config){
+                alert("There was a problem: " + status);
+            });
+        }
 ]);
