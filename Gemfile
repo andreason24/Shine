@@ -33,6 +33,7 @@ gem 'jbuilder', '~> 2.0'
 gem 'devise'
 gem 'bower-rails'
 gem 'faker'
+gem 'ffaker'
 gem 'pry'
 gem "angular-rails-templates"
 gem "sprockets"
